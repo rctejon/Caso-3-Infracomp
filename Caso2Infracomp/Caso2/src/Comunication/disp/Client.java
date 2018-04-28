@@ -22,6 +22,7 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class Client 
 {
+	
 	private final  String[] ALGORITHMS = {"AES","RSA","HMACSHA1"};
 	
 	private final  String PADDING="/ECB/PKCS5Padding";

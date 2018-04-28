@@ -29,7 +29,8 @@ public class Servidor {
 		try {
 			System.out.print("Puerto: ");
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			int puerto = Integer.parseInt(br.readLine());
+//			int puerto = Integer.parseInt(br.readLine());
+			int puerto = 8081;
 			elSocket = new ServerSocket(puerto);
 			System.out.println("Servidor escuchando en puerto: " + puerto);
 			for (;;) {
