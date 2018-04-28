@@ -2,7 +2,7 @@ package Comunication.generator;
 
 import uniandes.gload.core.LoadGenerator;
 import uniandes.gload.core.Task;
-import uniandes.gload.examples.clientserver.generator.ClientServerTask;
+import Comunication.generator.*;;
 /**
  * GLoad Core Class - Task
  * @author Victor Guana at University of Los Andes (vm.guana26@uniandes.edu.co)
@@ -29,7 +29,7 @@ public class Generator
 	public Generator ()
 	{
 		Task work = createTask();
-		int numberOfTasks = 100;
+		int numberOfTasks = 4;
 		int gapBetweenTasks = 1000;
 		generator = new LoadGenerator("Client - Server Load Test", numberOfTasks, work, gapBetweenTasks);
 		generator.generate();

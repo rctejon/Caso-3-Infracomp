@@ -1,7 +1,7 @@
 package Comunication.generator;
 
 import uniandes.gload.core.Task;
-import uniandes.gload.examples.clientserver.Client;
+import Comunication.disp.*;
 
 /**
  * GLoad Core Class - Task
@@ -22,10 +22,13 @@ public class ClientServerTask extends Task
 	public void execute() 
 	{
 		// TODO Auto-generated method stub
-		Client client = new Client();
-		client.sendMessageToServer("Hi! i'm a client");
-		client.waitForMessageFromServer();
-		client.sendMessageToServer("EOT");
+		try {
+			Client client = new Client();
+			client.sendState("41 24.2028, 2 10.4418");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

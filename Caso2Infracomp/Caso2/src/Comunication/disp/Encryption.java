@@ -29,7 +29,7 @@ public class Encryption
 
 	public static byte[] cipher(byte[] data, Key llave, String algoritmo) throws Exception
 	{
-		System.out.println(algoritmo);
+//		System.out.println(algoritmo);
 		Cipher cipher = Cipher.getInstance(algoritmo);
 		cipher.init(Cipher.ENCRYPT_MODE, llave);
 		return cipher.doFinal(data);

@@ -22,15 +22,15 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class Client 
 {
-	private final static String[] ALGORITHMS = {"AES","RSA","HMACSHA1"};
+	private final  String[] ALGORITHMS = {"AES","RSA","HMACSHA1"};
 	
-	private final static String PADDING="/ECB/PKCS5Padding";
+	private final  String PADDING="/ECB/PKCS5Padding";
 	
 	private Socket socket;
 	
 	private BufferedReader reader;
 	
-	private static PrintWriter out;
+	private PrintWriter out;
 	
 	private SecretKey serverKey;
 	
@@ -51,8 +51,8 @@ public class Client
 	
 	public boolean sendState(String position) throws Exception
 	{	
-		ALGORITHMS[0]=chooseSimetricAlg();
-		ALGORITHMS[2]=chooseHMAC();
+//		ALGORITHMS[0]=chooseSimetricAlg();
+//		ALGORITHMS[2]=chooseHMAC();
 		conect();
 		init();
 		sendAlgorithms();
@@ -69,13 +69,13 @@ public class Client
 	    System.out.println("CLT: ACT2:"+encapsulate(Encryption.cipher(mac, serverCert.getPublicKey(),ALGORITHMS[1])));
 	    String line = reader.readLine();
 	    System.out.println("SRV: "+line);
-	    
+	    System.err.println("fin----------------------------------------------------------------------");
 	    return line.equals("ESTADO:OK");
 	}
 	
 	private void conect() throws Exception
 	{
-		socket = new Socket("localhost", 8080);
+		socket = new Socket("172.24.42.41", 8081);
 		reader = new BufferedReader( new InputStreamReader( socket.getInputStream( ) ) );
 		out = new PrintWriter( socket.getOutputStream( ), true );
 		
