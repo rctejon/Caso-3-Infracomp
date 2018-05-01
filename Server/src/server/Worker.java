@@ -3,10 +3,13 @@ package server;
 import java.awt.FontFormatException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
 import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -21,6 +24,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import com.sun.management.OperatingSystemMXBean;
 
 import server.Seguridad;
 import server.Transformacion;
@@ -88,7 +93,8 @@ public class Worker implements Runnable {
     }
 
     public void run() {
-        try {
+    	OperatingSystemMXBean bean = (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+        try (PrintWriter outPut= new PrintWriter(new FileWriter(new File("./data/data.csv"),true))){
             PrintWriter writer = new PrintWriter(ss.getOutputStream(), true);
             InputStream is = ss.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
@@ -186,6 +192,7 @@ public class Worker implements Runnable {
             }
 
             // verificamos que el cliente comprobo nuestro certificado
+            long time1=System.currentTimeMillis();
             linea = read(reader);
             if (!linea.split(SEPARADOR)[1].equals("OK")) {
                 System.out.println("Error de confirmación, cerrando conexion: " + linea);
@@ -202,7 +209,12 @@ public class Worker implements Runnable {
             String llav = Transformacion.toHexString(cyph);           
             write(writer, INICIO + SEPARADOR + llav); // aqui le enviamos al cliente la llave simetrica cifrada con la asimetrica del certificado
 
+            long time2=System.currentTimeMillis();
+            
+            long keyTime=time2-time1;
+            
             // recibimos respuesta del cliente con la localizacion cifrada con la simetrica. 
+            long timeAct1=System.currentTimeMillis();
             linea = read(reader);
             String[] parts = linea.split(SEPARADOR);
             String cipheredLocationHex = parts[1];
@@ -213,7 +225,6 @@ public class Worker implements Runnable {
             		cipheredLocationBytes, llaveSimetrica,
                     algoritmos[1]);
             
-           
                        
             // recibimos el digest cifrado con la clave publica del server
             linea = read(reader);
@@ -237,8 +248,13 @@ public class Worker implements Runnable {
                 String rta = ESTADO + SEPARADOR + ERROR;
                 write(writer, rta);
             }
+            long timeOK=System.currentTimeMillis();
+            long timeDone=timeOK-timeAct1;
             System.out.println("Thread " + id + "Terminando\n");
-
+            
+            synchronized (outPut) {
+				outPut.println(keyTime+","+timeDone+","+bean.getProcessCpuLoad());
+			}
         } catch (NullPointerException e) {
 
             printError(e);
@@ -249,9 +265,12 @@ public class Worker implements Runnable {
             }
         } catch (IOException e) {
             printError(e);
-
-            try {
+            System.err.println(1);
+            try (PrintWriter op= new PrintWriter(new FileWriter(new File("./data/errorLog.csv"),true))){
                 ss.close();
+                synchronized (op) {
+                    op.println(1);
+				}
             } catch (Exception localException3) {
             }
         } catch (FontFormatException e) {
@@ -303,6 +322,7 @@ public class Worker implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println(1);
             try {
                 ss.close();
             } catch (Exception localException11) {

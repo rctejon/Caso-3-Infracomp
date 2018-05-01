@@ -1,16 +1,22 @@
 package server;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.sun.management.OperatingSystemMXBean;
+
 public class Servidor {
 	private static final int TIME_OUT = 10000;
-	public static final int N_THREADS = 2;
+	public static final int N_THREADS = 8;
 	private static ServerSocket elSocket;
 	private static Servidor elServidor;
 
@@ -41,6 +47,7 @@ public class Servidor {
 				System.out.println("Thread " + num + " recibe a un cliente.");
 				executor.submit(new Worker(num, sThread));
 				num++;
+               // System.err.println(bean.getSystemCpuLoad());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
