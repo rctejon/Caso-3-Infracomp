@@ -2,7 +2,8 @@ package Comunication.generator;
 
 import uniandes.gload.core.LoadGenerator;
 import uniandes.gload.core.Task;
-import Comunication.generator.*;;
+import Comunication.generator.*;
+import Comunication.test.StressTest;;
 /**
  * GLoad Core Class - Task
  * @author Victor Guana at University of Los Andes (vm.guana26@uniandes.edu.co)
@@ -26,11 +27,12 @@ public class Generator
 	/**
 	 * Constructs a new Generator
 	 */
-	public Generator ()
+	public Generator (int number, int gap, StressTest test)
 	{
-		Task work = createTask();
-		int numberOfTasks = 4;
-		int gapBetweenTasks = 1000;
+		test.setFails(0);
+		Task work = createTask(test);
+		int numberOfTasks = number;
+		int gapBetweenTasks = gap;
 		generator = new LoadGenerator("Client - Server Load Test", numberOfTasks, work, gapBetweenTasks);
 		generator.generate();
 	}
@@ -38,9 +40,9 @@ public class Generator
 	/**
 	 * Helper that Constructs a Task
 	 */
-	private Task createTask()
+	private Task createTask(StressTest test)
 	{
-		return new ClientServerTask();
+		return new ClientServerTask(test);
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class Generator
 	public static void main (String ... args)
 	{
 		@SuppressWarnings("unused")
-		Generator gen = new Generator();
+		Generator gen = new Generator(100,100, new StressTest());
 	}
 
 }

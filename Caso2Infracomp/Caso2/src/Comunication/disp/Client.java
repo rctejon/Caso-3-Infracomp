@@ -3,6 +3,7 @@ package Comunication.disp;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,9 +24,9 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 public class Client 
 {
 	
-	private final  String[] ALGORITHMS = {"AES","RSA","HMACSHA1"};
+	private String[] ALGORITHMS = {"AES","RSA","HMACSHA1"};
 	
-	private final  String PADDING="/ECB/PKCS5Padding";
+	private String PADDING="/ECB/PKCS5Padding";
 	
 	private Socket socket;
 	
@@ -42,6 +43,8 @@ public class Client
 	private KeyPair pair;
 
 	private Scanner scan;
+	
+	private InputStream in;
 	
 
 	public Client() throws Exception
@@ -77,9 +80,9 @@ public class Client
 	private void conect() throws Exception
 	{
 		socket = new Socket("172.24.42.41", 8081);
-		reader = new BufferedReader( new InputStreamReader( socket.getInputStream( ) ) );
-		out = new PrintWriter( socket.getOutputStream( ), true );
-		
+		reader = new BufferedReader( new InputStreamReader( socket.getInputStream()));
+		out = new PrintWriter( socket.getOutputStream(),true);
+		in=socket.getInputStream();
 	}
 	
 	private boolean init() throws IOException
@@ -113,18 +116,32 @@ public class Client
 		System.out.println("CLT: CERTCLNT");
 		System.out.println("SRV: "+reader.readLine());
 		System.out.println("SRV: "+reader.readLine());
-		out.println("ESTADO:OK");
-		System.out.println("CLT: ESTADO:OK");
 		
 	}
 	
 	private void receiveCert() throws Exception
 	{
 		byte[] bytes2 = new byte[1000];
-		int h = socket.getInputStream().read(bytes2);
-		bytes2= Arrays.copyOf(bytes2,h );
-//		System.out.print(new String(bytes2));
-		serverCert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(bytes2));
+		in.read(bytes2);
+		try {
+			serverCert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(bytes2));
+		}
+		catch (Exception e) {
+//			h = socket.getInputStream().read();
+//			String ln = reader.readLine();
+//			String ln2 = "";
+//			while(ln!=null) {
+//				ln2+= ln;
+//				ln = reader.readLine();
+//			}
+//			bytes2 = ln2.getBytes();
+//			serverCert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(bytes2));
+//			System.out.print("hola"+new String(bytes2));
+//			System.err.println("hola"+new String(bytes2));
+//			System.err.println("chao"+reader.readLine()+"         "+h);
+		}
+		out.println("ESTADO:OK");
+		System.out.println("CLT: ESTADO:OK");
 	}
 	
 	private void receiveKey() throws Exception
