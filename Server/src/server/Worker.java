@@ -207,7 +207,7 @@ public class Worker implements Runnable {
                     certificadoCliente.getPublicKey(), algoritmos[2]);
 
             String llav = Transformacion.toHexString(cyph);           
-            write(writer, INICIO + SEPARADOR + llav); // aqui le enviamos al cliente la llave simetrica cifrada con la asimetrica del certificado
+            write(writer, INICIO); // aqui le enviamos al cliente la llave simetrica cifrada con la asimetrica del certificado
 
             long time2=System.currentTimeMillis();
             
@@ -215,31 +215,33 @@ public class Worker implements Runnable {
             
             // recibimos respuesta del cliente con la localizacion cifrada con la simetrica. 
             long timeAct1=System.currentTimeMillis();
+            boolean verificacion=false;
             linea = read(reader);
             String[] parts = linea.split(SEPARADOR);
-            String cipheredLocationHex = parts[1];
-            
-            byte[] cipheredLocationBytes = Transformacion.toByteArray(cipheredLocationHex);
-            
-            byte[] cipheredLocation = Seguridad.sD(
-            		cipheredLocationBytes, llaveSimetrica,
-                    algoritmos[1]);
-            
+//            String cipheredLocationHex = parts[1];
+//            
+//            byte[] cipheredLocationBytes = Transformacion.toByteArray(cipheredLocationHex);
+//            
+//            byte[] cipheredLocation = Seguridad.sD(
+//            		cipheredLocationBytes, llaveSimetrica,
+//                    algoritmos[1]);
+            verificacion=linea.equals("ACT1");   
                        
             // recibimos el digest cifrado con la clave publica del server
             linea = read(reader);
             String[] parts2 = linea.split(SEPARADOR);
-            String digestHex = parts2[1];
-            byte[] encryptedDigestBytes = Transformacion.toByteArray(digestHex);
-            
-            byte[] digestBytes = Seguridad.aD(
-            		encryptedDigestBytes, keyPair.getPrivate(),
-                    algoritmos[2]);
+            verificacion=verificacion&&linea.equals("ACT2");
+//            String digestHex = parts2[1];
+//            byte[] encryptedDigestBytes = Transformacion.toByteArray(digestHex);
+//            
+//            byte[] digestBytes = Seguridad.aD(
+//            		encryptedDigestBytes, keyPair.getPrivate(),
+//                    algoritmos[2]);
             
             // hacemos la verificacion final
-            boolean verificacion = Seguridad.verifyIntegrity(cipheredLocation,
-                    llaveSimetrica, algoritmos[3], digestBytes);
-
+//            verificacion = Seguridad.verifyIntegrity(cipheredLocation,
+//                    llaveSimetrica, algoritmos[3], digestBytes);
+            
             if (verificacion) {
                 String rta = ESTADO + SEPARADOR + OK;
                 write(writer, rta);

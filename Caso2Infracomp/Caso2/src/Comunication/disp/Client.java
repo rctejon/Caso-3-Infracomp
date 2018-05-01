@@ -64,13 +64,21 @@ public class Client
 		receiveCert();
 		receiveKey();
 		
+//		byte[] cipher = Encryption.cipher(position.getBytes(),serverKey, ALGORITHMS[0]+PADDING);
+//		out.println("ACT1:"+encapsulate(cipher));
+//		System.out.println("CLT: ACT1:"+encapsulate(cipher));
+//		
+//		byte[] mac = Encryption.calcMAC(position.getBytes(), serverKey, ALGORITHMS[2]);
+//	    out.println("ACT2:"+encapsulate(Encryption.cipher(mac, serverCert.getPublicKey(),ALGORITHMS[1])));
+//	    System.out.println("CLT: ACT2:"+encapsulate(Encryption.cipher(mac, serverCert.getPublicKey(),ALGORITHMS[1])));
 		byte[] cipher = Encryption.cipher(position.getBytes(),serverKey, ALGORITHMS[0]+PADDING);
-		out.println("ACT1:"+encapsulate(cipher));
+		out.println("ACT1:");
 		System.out.println("CLT: ACT1:"+encapsulate(cipher));
 		
 		byte[] mac = Encryption.calcMAC(position.getBytes(), serverKey, ALGORITHMS[2]);
-	    out.println("ACT2:"+encapsulate(Encryption.cipher(mac, serverCert.getPublicKey(),ALGORITHMS[1])));
+	    out.println("ACT2:");
 	    System.out.println("CLT: ACT2:"+encapsulate(Encryption.cipher(mac, serverCert.getPublicKey(),ALGORITHMS[1])));
+	    
 	    String line = reader.readLine();
 	    System.out.println("SRV: "+line);
 	    System.err.println("fin----------------------------------------------------------------------");
